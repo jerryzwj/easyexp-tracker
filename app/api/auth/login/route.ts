@@ -1,39 +1,42 @@
-import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcrypt';
-import clientPromise from '@/lib/mongodb';
-import { generateToken } from '@/lib/jwt';
+import { NextRequest, NextResponse } from 'next/server'
+import { hashPassword, comparePassword } from '@/lib/password'
+import { getDb, generateId } from '@/lib/db'
+import { generateToken } from '@/lib/jwt'
+
+export const runtime = 'edge'
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
+    const { username, password } = await request.json() as { username: string; password: string }
 
     if (!username || !password) {
-      return NextResponse.json({ error: '用户名和密码不能为空' }, { status: 400 });
+      return NextResponse.json({ error: '用户名和密码不能为空' }, { status: 400 })
     }
 
-    const client = await clientPromise;
-    const db = client.db('EasyExp');
-    const userCollection = db.collection('user');
+    const db = await getDb()
 
-    const user = await userCollection.findOne({ username });
-    if (!user) {
-      return NextResponse.json({ error: '用户名或密码错误' }, { status: 401 });
+    const existingUser = await db.prepare('SELECT * FROM users WHERE username = ?').bind(username).first()
+    if (!existingUser) {
+      return NextResponse.json({ error: '用户名或密码错误' }, { status: 401 })
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await comparePassword(password, existingUser.password as string)
     if (!isPasswordValid) {
-      return NextResponse.json({ error: '用户名或密码错误' }, { status: 401 });
+      return NextResponse.json({ error: '用户名或密码错误' }, { status: 401 })
     }
 
-    const token = generateToken(user._id.toString());
+    const token = await generateToken(existingUser.id as string)
 
-    return NextResponse.json({
-      message: '登录成功',
-      user: { id: user._id.toString(), username: user.username },
-      token
-    }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: '登录成功',
+        user: { id: existingUser.id, username: existingUser.username },
+        token,
+      },
+      { status: 200 }
+    )
   } catch (error) {
-    console.error('登录失败:', error);
-    return NextResponse.json({ error: '登录失败' }, { status: 500 });
+    console.error('登录失败:', error)
+    return NextResponse.json({ error: '登录失败' }, { status: 500 })
   }
 }

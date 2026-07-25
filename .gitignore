@@ -67,3 +67,11 @@ out
 # Temporary folders
 tmp/
 temp/
+
+# Cloudflare
+.cloudflare/
+.wrangler/
+.dev.vars
+
+# TypeScript incremental build cache
+*.tsbuildinfo

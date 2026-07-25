@@ -1,7 +1,8 @@
-import type { NextConfig } from 'next/config'
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare'
 
-const nextConfig: NextConfig = {
-  /* config options here */
-}
+initOpenNextCloudflareForDev()
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {}
 
 export default nextConfig
