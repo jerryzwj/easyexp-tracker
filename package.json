@@ -7,9 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:cloudflare": "opennext-cloudflare",
-    "preview:cloudflare": "opennext-cloudflare && wrangler pages dev .cloudflare/dist --compatibility-flag=nodejs_compat",
-    "deploy": "opennext-cloudflare && wrangler pages deploy .cloudflare/dist",
+    "build:cloudflare": "opennextjs-cloudflare",
+    "preview:cloudflare": "opennextjs-cloudflare && wrangler pages dev .cloudflare/dist --compatibility-flag=nodejs_compat",
+    "deploy": "opennextjs-cloudflare && wrangler pages deploy .cloudflare/dist",
     "d1:create": "wrangler d1 create easyexp-db",
     "d1:migrate:local": "wrangler d1 migrations apply easyexp-db --local",
     "d1:migrate:remote": "wrangler d1 migrations apply easyexp-db --remote"
