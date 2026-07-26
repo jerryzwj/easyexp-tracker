@@ -69,9 +69,12 @@ tmp/
 temp/
 
 # Cloudflare
-.cloudflare/
 .wrangler/
 .dev.vars
+.open-next/
+.cloudflare/
+.next/
+out/
 
 # TypeScript incremental build cache
 *.tsbuildinfo
